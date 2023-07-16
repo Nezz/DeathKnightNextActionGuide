@@ -18,6 +18,7 @@ aura_env.Update = function(auras, rotation)
     auras[0] = {
         show = show,
         changed = true,
+        primary = true,
         icon = GetSpellTexture(aura_env.NextSpell)
     }
 
@@ -25,6 +26,7 @@ aura_env.Update = function(auras, rotation)
         auras[i] = {
             show = show and aura_env.SecondarySpells[i],
             changed = true,
+            primary = false,
             icon = GetSpellTexture(aura_env.SecondarySpells[i])
         }
     end
