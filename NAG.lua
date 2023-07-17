@@ -40,12 +40,12 @@ end
 aura_env.AuraRemainingTime = function(spellId)
     local spellName = GetSpellInfo(spellId)
     if not spellName then
-        return 999
+        return 0
     end
     local _,_,_,_,_,expires = AuraUtil.FindAuraByName(spellName, "player")
     
     if not expires then
-        return 999
+        return 0
     end
 
     return expires - aura_env.nextTime
@@ -59,12 +59,12 @@ end
 aura_env.DotRemainingTime = function(spellId)
     local spellName = GetSpellInfo(spellId)
     if not spellName then
-        return 999
+        return 0
     end
     local _,_,_,_,_,expires = AuraUtil.FindAuraByName(spellName, "target", "PLAYER|HARMFUL")
     
     if not expires then
-        return 999
+        return 0
     end
 
     return expires - aura_env.nextTime
