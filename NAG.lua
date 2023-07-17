@@ -181,9 +181,9 @@ aura_env.SpellCastSucceeded = function(spellId)
         if spellId == nextSpell then
             aura_env.SequencePosition[name] = aura_env.SequencePosition[name] + 1
             if #spells < aura_env.SequencePosition[name] then
-                print("Sequence " .. name .. " completed")
+                DebugPrint("Sequence " .. name .. " completed")
             else
-                print("Advanced to next spell in sequence: " .. name .. " " .. GetSpellInfo(nextSpell) .. " -> " .. GetSpellInfo(spells[aura_env.SequencePosition[name]]))
+                DebugPrint("Advanced to next spell in sequence: " .. name .. " " .. GetSpellInfo(nextSpell) .. " -> " .. GetSpellInfo(spells[aura_env.SequencePosition[name]]))
             end
         end
     end
