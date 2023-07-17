@@ -207,7 +207,7 @@ aura_env.Spells = {
     GCD = 61304,
     
     FrostFever = 55095,
-    BloodPlague = 55264,
+    BloodPlague = 55078,
     KillingMachine = 51124,
     FreezingFog = 59052,
     
