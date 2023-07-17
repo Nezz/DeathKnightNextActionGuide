@@ -231,9 +231,9 @@ aura_env.Spells = {
     DeathAndDecay = 49938,
     ArmyOfTheDead = 42650,
     Desolation = 66803,
-    SummonGargoyle = 61777,
+    SummonGargoyle = 49206,
     GhoulFrenzy = 63560,
-    ScourgeStrike = 71488,
+    ScourgeStrike = 55271,
 
     RuneStrike = 56815,
     DeathStrike = 49998,
