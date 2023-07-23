@@ -7,9 +7,9 @@ function(auras)
         spells.BloodStrike,
         spells.UnbreakableArmor,
         spells.BloodTap,
+        spells.Gloves,
         spells.DeathAndDecay,
         spells.EmpowerRuneWeapon,
-        spells.Gloves,
         spells.ArmyOfTheDead)
     or (not aura_env.DotIsActive(spells.FrostFever) and aura_env.Cast(spells.IcyTouch))
     or (not aura_env.DotIsActive(spells.BloodPlague) and aura_env.Cast(spells.PlagueStrike))
