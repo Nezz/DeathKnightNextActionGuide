@@ -13,3 +13,9 @@ Inside it you can expand "Trigger 1", where you find the [code for the rotation]
 
 The rotation is a single logical condition that keeps executing until it finds a spell that can be cast.
 If a major cooldown is found then it is suggested on the left side of the WeakAura, but the logical condition keeps running until a regular spell is found that can be cast.
+The example above in code looks like this:
+```lua
+return (not aura_env.DotIsActive(spells.FrostFever) and aura_env.Cast(spells.IcyTouch))
+    or (not aura_env.DotIsActive(spells.BloodPlague) and aura_env.Cast(spells.PlagueStrike))
+    or (aura_env.DotRemainingTime(spells.FrostFever) < 1.5 and aura_env.DotIsActive(spells.FrostFever) and aura_env.Cast(spells.Pestilence))
+```
