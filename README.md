@@ -9,8 +9,7 @@ After importing the [NAG](https://wago.io/Pl9Fk7Ktw) you can find the individual
 ![WA Trigger](https://github.com/Nezz/DeathKnightNextActionGuide/assets/431167/582e832c-f544-4141-b6d2-67172d054dad)
 
 Inside it you can expand "Trigger 1", where you find the [code for the rotation](https://github.com/Nezz/DeathKnightNextActionGuide/blob/2a22a8e55ee3d23e8fa4c22c650c07ddb73943d7/NAG%20Frost%20sub-blood.lua#L4-L30), which is usually around 20-30 lines. This is a direct translation of the wowsims APL rotation that you can modify. Here are some examples:
-
-![Example](https://github.com/Nezz/DeathKnightNextActionGuide/assets/431167/1ab7f271-3ed7-4f27-a833-93580f802652)
+![Example](https://github.com/Nezz/DeathKnightNextActionGuide/assets/431167/3b928a78-5947-4c2d-81fb-b0e747a9411d)
 
 The rotation is a single logical condition that keeps executing until it finds a spell that can be cast.
 If a major cooldown is found then it is suggested on the left side of the WeakAura, but the logical condition keeps running until a regular spell is found that can be cast.
