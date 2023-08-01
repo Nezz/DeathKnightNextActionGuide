@@ -11,9 +11,14 @@ aura_env.Update = function(auras, rotation)
     aura_env.NextSpell = 10730
     aura_env.SecondarySpells = {}
 
-    rotation()
-
     local show = UnitCanAttack("player", "target")
+    if show then
+        local foundSpell = rotation()
+        while not foundSpell and aura_env.nextTime - timeNow < 10 do
+            aura_env.nextTime = aura_env.nextTime + 0.3
+            foundSpell = rotation()
+        end
+    end
 
     auras[0] = {
         show = show,
