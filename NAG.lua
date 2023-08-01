@@ -134,7 +134,7 @@ aura_env.RuneType = {
 aura_env.NumNonDeathRunes = function(runeType)
     local total = 0
     for i=1,6 do
-        if GetRuneType(i) == runeType then
+        if GetRuneType(i) == runeType and aura_env.RuneReady(i) then
             total = total + 1
         end
     end
@@ -145,11 +145,16 @@ aura_env.NumRunes = function(runeType)
     local total = 0
     for i=1,6 do
         local rt = GetRuneType(i)
-        if rt == runeType or rt == aura_env.RuneType.Death then
+        if (rt == runeType or rt == aura_env.RuneType.Death) and aura_env.RuneReady(i) then
             total = total + 1
         end
     end
     return total
+end
+
+aura_env.RuneReady = function(index)
+    local start, duration = GetRuneCooldown(index);
+    return start + duration <= aura_env.nextTime
 end
 
 aura_env.ResetSequences = function()
