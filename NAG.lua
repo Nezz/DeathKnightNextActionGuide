@@ -262,6 +262,7 @@ aura_env.Spells = {
     RuneStrike = 56815,
     DeathStrike = 49998,
     DeathCoil = 47541,
+    UnholyFrenzy = 49016,
 
     FrostPresence = 48263,
     UnholyPresence = 48265,
