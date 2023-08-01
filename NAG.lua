@@ -76,13 +76,13 @@ aura_env.IsReady = function(spellId)
 end
 
 aura_env.CanCast = function(spellId)
-    local usable,nomana = IsUsableSpell(spellId)
-    if nomana then
+    if not aura_env.HasRunicPower(spellId) then
         return false
     end
 
     -- Rune Strike has no cooldown, it becomes usable after a dodge or parry
     if spellId == aura_env.Spells.RuneStrike then
+        local usable = IsUsableSpell(spellId)
         if not usable or IsCurrentSpell(aura_env.Spells.RuneStrike) then
             return false
         end
@@ -196,6 +196,20 @@ aura_env.AddSecondarySpell = function(spellId)
         end
     end
     table.insert(aura_env.SecondarySpells, spellId)
+end
+
+aura_env.HasRunicPower = function(spellId)
+    local costTable = GetSpellPowerCost(spellId);
+	if costTable == nil then
+		return 0
+	end
+	local cost = table.foreach(costTable, function(_, v)
+		if v.name == "RUNIC_POWER" then
+			return math.max(v.cost, 0); -- Negative runing power is returned for spells that generate runic power
+		end
+	end)
+
+    return not cost or cost <= UnitPower("player", SPELL_POWER_RUNIC_POWER)
 end
 
 aura_env.Spells = {
