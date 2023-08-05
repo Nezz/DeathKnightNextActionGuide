@@ -13,7 +13,7 @@ function(auras)
         or (aura_env.TimeToReady(spells.DeathAndDecay) > 6 and aura_env.Cast(spells.BloodBoil))
         or aura_env.Cast(spells.SummonGargoyle)
         or (not aura_env.IsReady(spells.SummonGargoyle) and aura_env.Cast(spells.DeathCoil))
-        or (aura_env.Cast(spells.BloodTap) and aura_env.Cast(spells.GhoulFrenzy))
+        or (aura_env.IsReady(spells.BloodTap) and aura_env.IsReady(spells.GhoulFrenzy) and (aura_env.Cast(spells.BloodTap) or aura_env.Cast(spells.GhoulFrenzy)))
         or (aura_env.AuraIsActive(spells.UnholyPresence) and not aura_env.IsReady(spells.SummonGargoyle) and not aura_env.AuraIsActive(spells.SummonGargoyle) and aura_env.Cast(spells.BloodPresence))
     end)
     return true
