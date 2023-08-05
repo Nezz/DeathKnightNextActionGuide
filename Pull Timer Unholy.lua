@@ -3,5 +3,5 @@ function()
     
     aura_env.Prepull[-10] = spells.UnholyPresence
     aura_env.Prepull[-8] = spells.GhoulFrenzy
-    aura_env.Prepull[-1] = spells.PotionOfSpeed
+    aura_env.Potion = spells.PotionOfSpeed
 end
