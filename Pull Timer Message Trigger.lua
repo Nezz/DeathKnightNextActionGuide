@@ -25,8 +25,10 @@ function(auras, event, text, content, channel)
 
                         if not isKilled and (i == 1 or i == 2) then
                             return false
-                        end          
+                        end
                     end
+                else
+                    return false
                 end
             end
 
