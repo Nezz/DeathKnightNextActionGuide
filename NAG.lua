@@ -12,6 +12,7 @@ aura_env.Update = function(auras, rotation)
     aura_env.SecondarySpells = {}
     aura_env.FindAuraByNamePlayerCache = {}
     aura_env.FindAuraByNameTargetCache = {}
+    aura_env.FindAuraByNamePetCache = {}
 
     local show = UnitCanAttack("player", "target")
     if show then
@@ -49,6 +50,11 @@ aura_env.AuraIsActive = function(spellId)
 
     local spellName = GetSpellInfo(spellId)
     return spellName and aura_env.FindAuraByName(spellName, "player")
+end
+
+aura_env.AuraIsActivePet = function(spellId)
+    local spellName = GetSpellInfo(spellId)
+    return spellName and aura_env.FindAuraByName(spellName, "pet")
 end
 
 aura_env.AuraRemainingTime = function(spellId)
@@ -348,6 +354,8 @@ aura_env.FindAuraByName = function(name, unit)
     elseif unit == "target" then
         cache = aura_env.FindAuraByNameTargetCache
         filter = "PLAYER|HARMFUL"
+    elseif unit == "pet" then
+        cache = aura_env.FindAuraByNamePetCache
     end
 
     local aura = cache[name]
