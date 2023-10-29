@@ -333,7 +333,8 @@ aura_env.IsMajorCooldown = function(spellId)
         spellId == aura_env.Spells.Sapper or
         spellId == aura_env.Spells.PotionOfSpeed or
         spellId == aura_env.Spells.IndestructiblePotion or
-        spellId == aura_env.Spells.FrostPresence
+        spellId == aura_env.Spells.FrostPresence or
+        spellId == aura_env.Spells.UnholyFrenzy
 end
 
 aura_env.IcdReady = {}
