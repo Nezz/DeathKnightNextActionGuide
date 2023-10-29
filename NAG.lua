@@ -187,12 +187,12 @@ aura_env.NextRuneCooldown = function(runeType)
     for i=1,6 do
         local rt = GetRuneType(i)
         if rt == runeType or rt == aura_env.RuneType.Death then
-            local start, duration = GetRuneCooldown(index);
+            local start, duration = GetRuneCooldown(i);
             cooldown = math.min(cooldown, start + duration - aura_env.nextTime)
         end
     end
 
-    return cooldown
+    return math.max(cooldown, 0)
 end
 
 aura_env.ResetSequences = function()
