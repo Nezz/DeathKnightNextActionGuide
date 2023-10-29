@@ -1,7 +1,8 @@
 function(auras)
     local spells = aura_env.Spells
     aura_env.Update(auras, function()
-        return (aura_env.RunicPower() >= 40 and aura_env.Cast(spells.RuneStrike))
+        return (not aura_env.AuraIsActive(spells.FrostPresence) and aura_env.Cast(spells.FrostPresence))
+        or (aura_env.RunicPower() >= 40 and aura_env.Cast(spells.RuneStrike))
         or (not aura_env.DotIsActive(spells.FrostFever) and aura_env.Cast(spells.IcyTouch))
         or (not aura_env.DotIsActive(spells.BloodPlague) and aura_env.Cast(spells.PlagueStrike))
         or (aura_env.DotRemainingTime(spells.BloodPlague) < 3 and aura_env.DotIsActive(spells.BloodPlague) and aura_env.Cast(spells.Pestilence))

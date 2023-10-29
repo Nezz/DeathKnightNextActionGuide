@@ -56,6 +56,29 @@ aura_env.AuraRemainingTime = function(spellId)
     return expires - aura_env.nextTime
 end
 
+aura_env.AuraRemainingICD = function(spellId)
+    local spellName = GetSpellInfo(spellId)
+    if not spellName then
+        return 0
+    end
+    local _,_,_,_,duration,expires = AuraUtil.FindAuraByName(spellName, "player")
+
+    local icdReady = 0
+    if expires then
+        icdReady = expires - duration + aura_env.GetIcd(spellId)
+        aura_env.IcdReady[spellId] = icdReady
+    else
+        icdReady = aura_env.IcdReady[spellId]
+
+        if not icdReady then
+            -- We are not aware of this buff being applied in the past, so we assume that it's ready
+            return 0
+        end
+    end
+
+    return icdReady - aura_env.nextTime
+end
+
 aura_env.DotIsActive = function(spellId)
     local spellName = GetSpellInfo(spellId)
     return spellName and AuraUtil.FindAuraByName(spellName, "target", "PLAYER|HARMFUL")
@@ -157,6 +180,19 @@ aura_env.RuneReady = function(index)
     return start + duration <= aura_env.nextTime
 end
 
+aura_env.NextRuneCooldown = function(runeType)
+    local cooldown = 10
+    for i=1,6 do
+        local rt = GetRuneType(i)
+        if rt == runeType or rt == aura_env.RuneType.Death then
+            local start, duration = GetRuneCooldown(index);
+            cooldown = math.min(cooldown, start + duration - aura_env.nextTime)
+        end
+    end
+
+    return cooldown
+end
+
 aura_env.ResetSequences = function()
     aura_env.SequencePosition = {}
     aura_env.SequenceSpells = {}
@@ -234,6 +270,8 @@ aura_env.Spells = {
     BloodPlague = 55078,
     KillingMachine = 51124,
     FreezingFog = 59052,
+    UnholyForce = 67383,
+    UnholyMight = 67117,
     
     IcyTouch = 49909,
     FrostStrike = 55268,
@@ -279,5 +317,14 @@ aura_env.IsMajorCooldown = function(spellId)
         spellId == aura_env.Spells.SaroniteBomb or
         spellId == aura_env.Spells.Sapper or
         spellId == aura_env.Spells.PotionOfSpeed or
-        spellId == aura_env.Spells.IndestructiblePotion
+        spellId == aura_env.Spells.IndestructiblePotion or
+        spellId == aura_env.Spells.FrostPresence
+end
+
+aura_env.IcdReady = {}
+
+aura_env.GetIcd = function(spellId)
+    if spellId == aura_env.Spells.UnholyMight then
+        return 45
+    end
 end
