@@ -10,6 +10,8 @@ aura_env.Update = function(auras, rotation)
     aura_env.nextTime = math.max(timeNow + 0.3, gcdStart + gcdDuration)
     aura_env.NextSpell = 10730
     aura_env.SecondarySpells = {}
+    aura_env.FindAuraByNamePlayerCache = {}
+    aura_env.FindAuraByNameTargetCache = {}
 
     local show = UnitCanAttack("player", "target")
     if show then
@@ -41,7 +43,7 @@ end
 
 aura_env.AuraIsActive = function(spellId)
     local spellName = GetSpellInfo(spellId)
-    return spellName and AuraUtil.FindAuraByName(spellName, "player")
+    return spellName and aura_env.FindAuraByName(spellName, "player")
 end
 
 aura_env.AuraRemainingTime = function(spellId)
@@ -49,7 +51,7 @@ aura_env.AuraRemainingTime = function(spellId)
     if not spellName then
         return 0
     end
-    local _,_,_,_,_,expires = AuraUtil.FindAuraByName(spellName, "player")
+    local _,_,_,_,_,expires = aura_env.FindAuraByName(spellName, "player")
     
     if not expires then
         return 0
@@ -63,7 +65,7 @@ aura_env.AuraRemainingICD = function(spellId)
     if not spellName then
         return 0
     end
-    local _,_,_,_,duration,expires = AuraUtil.FindAuraByName(spellName, "player")
+    local _,_,_,_,duration,expires = aura_env.FindAuraByName(spellName, "player")
 
     local icdReady = 0
     if expires then
@@ -83,7 +85,7 @@ end
 
 aura_env.DotIsActive = function(spellId)
     local spellName = GetSpellInfo(spellId)
-    return spellName and AuraUtil.FindAuraByName(spellName, "target", "PLAYER|HARMFUL")
+    return spellName and aura_env.FindAuraByName(spellName, "target")
 end
 
 aura_env.DotRemainingTime = function(spellId)
@@ -91,7 +93,7 @@ aura_env.DotRemainingTime = function(spellId)
     if not spellName then
         return 0
     end
-    local _,_,_,_,_,expires = AuraUtil.FindAuraByName(spellName, "target", "PLAYER|HARMFUL")
+    local _,_,_,_,_,expires = aura_env.FindAuraByName(spellName, "target")
     
     if not expires then
         return 0
@@ -329,4 +331,24 @@ aura_env.GetIcd = function(spellId)
     if spellId == aura_env.Spells.UnholyMight then
         return 45
     end
+end
+
+-- Caches the result of AuraUtil.FindAuraByName until Update is called
+-- Assumes "PLAYER|HARMFUL" filter for target auras
+aura_env.FindAuraByName = function(name, unit)
+    local cache = nil
+    local filter = nil
+    if unit == "player" then
+        cache = aura_env.FindAuraByNamePlayerCache
+    elseif unit == "target" then
+        cache = aura_env.FindAuraByNameTargetCache
+        filter = "PLAYER|HARMFUL"
+    end
+
+    local aura = cache[name]
+    if not aura then
+        aura = { AuraUtil.FindAuraByName(name, unit, filter) }
+        cache[name] = aura
+    end
+    return aura[1], aura[2], aura[3], aura[4], aura[5], aura[6]
 end
