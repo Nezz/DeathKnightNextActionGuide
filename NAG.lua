@@ -42,6 +42,11 @@ aura_env.Update = function(auras, rotation)
 end
 
 aura_env.AuraIsActive = function(spellId)
+    if spellId == aura_env.Spells.SummonGargoyle then
+        -- The sim assumes that Gary is an aura but it's not
+        return aura_env.TimeToReady(aura_env.Spells.SummonGargoyle) >= 150
+    end
+
     local spellName = GetSpellInfo(spellId)
     return spellName and aura_env.FindAuraByName(spellName, "player")
 end
