@@ -1,0 +1,4 @@
+--Custom->Status->Event(s): PLAYER_LEAVE_COMBAT
+function()
+    aura_env.ResetSequences()
+end

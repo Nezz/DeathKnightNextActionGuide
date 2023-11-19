@@ -1,0 +1,14 @@
+--Custom->Status->Event(s): SIM_NAG_THROTTLER
+function()
+    local time = GetTime()
+    if not aura_env.last or aura_env.last < time - .75 then
+        aura_env.last = time
+        aura_env.TTDRefresh_f()
+        aura_env.mobCount = aura_env.MobsAround()
+        local unit = "target"
+        if UnitExists(unit) then
+            local GUID = UnitGUID(unit)
+            aura_env.TTD = aura_env.TimeToX_f(GUID, 0, 3)
+        end       
+    end
+end
