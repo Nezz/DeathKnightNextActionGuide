@@ -1,8 +1,9 @@
-aura_env.DEBUG = false
+aura_env.DEBUG = true
+
 if not _G[aura_env.id] then
     _G[aura_env.id] = C_Timer.NewTicker(0.1, function()
             WeakAuras.ScanEvents("SIM_NAG_UPDATE")
-	    WeakAuras.ScanEvents("SIM_NAG_THROTTLER")
+            WeakAuras.ScanEvents("SIM_NAG_THROTTLER")
     end)
 end
 
@@ -15,7 +16,7 @@ aura_env.Update = function(auras, rotation)
     aura_env.FindAuraByNamePlayerCache = {}
     aura_env.FindAuraByNameTargetCache = {}
     aura_env.FindAuraByNamePetCache = {}
-
+    
     local show = UnitCanAttack("player", "target")
     if show then
         local foundSpell = rotation()
@@ -24,7 +25,7 @@ aura_env.Update = function(auras, rotation)
             foundSpell = rotation()
         end
     end
-
+    
     auras[0] = {
         show = show,
         changed = true,
@@ -32,7 +33,7 @@ aura_env.Update = function(auras, rotation)
         icon = GetSpellTexture(aura_env.NextSpell),
         index = 0
     }
-
+    
     for i=1,5 do
         auras[i] = {
             show = show and aura_env.SecondarySpells[i],
@@ -51,7 +52,7 @@ aura_env.AuraIsActive = function(spellId)
         -- The sim assumes that Gary is an aura but it's not
         return aura_env.TimeToReady(aura_env.Spells.SummonGargoyle) >= 150
     end
-
+    
     local spellName = GetSpellInfo(spellId)
     return spellName and aura_env.FindAuraByName(spellName, "player")
 end
@@ -73,7 +74,7 @@ aura_env.AuraRemainingTime = function(spellId)
     if not expires then
         return 0
     end
-
+    
     return expires - aura_env.nextTime
 end
 
@@ -83,20 +84,20 @@ aura_env.AuraRemainingICD = function(spellId)
         return 0
     end
     local _,_,_,_,duration,expires = aura_env.FindAuraByName(spellName, "player")
-
+    
     local icdReady = 0
     if expires then
         icdReady = expires - duration + aura_env.GetIcd(spellId)
         aura_env.IcdReady[spellId] = icdReady
     else
         icdReady = aura_env.IcdReady[spellId]
-
+        
         if not icdReady then
             -- We are not aware of this buff being applied in the past, so we assume that it's ready
             return 0
         end
     end
-
+    
     return icdReady - aura_env.nextTime
 end
 
@@ -139,7 +140,7 @@ aura_env.DotRemainingTime = function(spellId)
     if not expires then
         return 0
     end
-
+    
     return expires - aura_env.nextTime
 end
 
@@ -178,7 +179,7 @@ aura_env.CanCast = function(spellId)
     if not aura_env.HasRunicPower(spellId) then
         return false
     end
-
+    
     -- Rune Strike has no cooldown, it becomes usable after a dodge or parry
     if spellId == aura_env.Spells.RuneStrike then
         local usable = IsUsableSpell(spellId)
@@ -186,18 +187,18 @@ aura_env.CanCast = function(spellId)
             return false
         end
     end
-
+    
     return aura_env.IsReady(spellId)
 end
 aura_env.SpellCanCast = aura_env.CanCast
 
 aura_env.TimeToReady = function(spellId)
     local start, duration = GetSpellCooldown(spellId)
-
+    
     if start == 0 then
         return 0
     end
-
+    
     return start + duration - aura_env.nextTime
 end
 aura_env.SpellTimeToReady = aura_env.TimeToReady
@@ -318,7 +319,7 @@ aura_env.NextRuneCooldown = function(runeType)
             cooldown = math.min(cooldown, start + duration - aura_env.nextTime)
         end
     end
-
+    
     return math.max(cooldown, 0)
 end
 aura_env.RuneCooldown = aura_env.NextRuneCooldown
@@ -402,11 +403,11 @@ end
 
 aura_env.Sequence = function(name, ...)
     local index = aura_env.SequencePosition[name] or 1
-
+    
     if select('#',...) < index then
         return false
     end
-
+    
     if not aura_env.SequenceSpells[name] then
         aura_env.SequenceSpells[name] = {...}
     end
@@ -433,7 +434,7 @@ end
 aura_env.AddSecondarySpell = function(spellId)
     for i=1,#aura_env.SecondarySpells do
         if aura_env.SecondarySpells[i] == spellId then
-           return
+            return
         end
     end
     table.insert(aura_env.SecondarySpells, spellId)
@@ -441,15 +442,15 @@ end
 
 aura_env.HasRunicPower = function(spellId)
     local costTable = GetSpellPowerCost(spellId);
-	if costTable == nil then
-		return 0
-	end
-	local cost = table.foreach(costTable, function(_, v)
-		if v.name == "RUNIC_POWER" then
-			return math.max(v.cost, 0); -- Negative runing power is returned for spells that generate runic power
-		end
-	end)
-
+    if costTable == nil then
+        return 0
+    end
+    local cost = table.foreach(costTable, function(_, v)
+            if v.name == "RUNIC_POWER" then
+                return math.max(v.cost, 0); -- Negative runing power is returned for spells that generate runic power
+            end
+    end)
+    
     return not cost or cost <= UnitPower("player", SPELL_POWER_RUNIC_POWER)
 end
 
@@ -487,23 +488,6 @@ aura_env.MobsAround = function()
     return count
 end
 
-aura_env.Print = function(...)
-    print(...)
-end
-
-aura_env.PrePull = function(currentPullTime)
-    local next = aura_env.Spells.Pacify
-    currentPullTime = tonumber(currentPullTime)
-    
-    for time,spellId in pairs(aura_env.Prepull) do
-        if currentPullTime <= -time and currentPullTime > -time - .5 then
-            
-            next = spellId
-        end
-    end
-    
-    return next
-end
 
 -- =========================================================================
 -- Autoattack values
@@ -530,58 +514,11 @@ aura_env.CancelAura = function(auraId) --TODO: not needed? unless we can maybe s
     return true
 end
 
-aura_env.Spells = {
-    BloodTap = 45529,
-    RaiseDead = 46584,
-    EmpowerRuneWeapon = 47568,
-    UnbreakableArmor = 51271,
-    HornOfWinter = 57623,
-    GCD = 61304,
-    
-    FrostFever = 55095,
-    BloodPlague = 55078,
-    KillingMachine = 51124,
-    FreezingFog = 59052,
-    UnholyForce = 67383,
-    UnholyMight = 67117,
-    
-    IcyTouch = 49909,
-    FrostStrike = 55268,
-    PlagueStrike = 49921,
-    Obliterate = 51425,
-    HowlingBlast = 51411,
-    Pestilence = 50842,
-    BloodStrike = 49930,
-    BloodBoil = 49941,
-    
-    PotionOfSpeed = 53908,
-    IndestructiblePotion = 53762,
-    Berserking = 26297,
-    Strangulate = 47476,
-    Gloves = 54758,
-    SaroniteBomb = 56350,
-    Sapper = 56488,
-
-    DeathAndDecay = 49938,
-    ArmyOfTheDead = 42650,
-    Desolation = 66803,
-    SummonGargoyle = 49206,
-    GhoulFrenzy = 63560,
-    ScourgeStrike = 55271,
-
-    RuneStrike = 56815,
-    DeathStrike = 49998,
-    DeathCoil = 47541,
-    UnholyFrenzy = 49016,
-
-    FrostPresence = 48263,
-    UnholyPresence = 48265,
-    BloodPresence = 48266,
-}
 -- ==========================================================
 -- Autobuild Spells from spellbook, need to add procs/buffs/etc that aren't listed in the specs spellbook
 aura_env.Spells = {}
 aura_env.SpellsById = {}
+
 aura_env.BuildSpellBook = function()
     aura_env.Spells = {}
     local i = 1
@@ -602,7 +539,7 @@ aura_env.BuildSpellBook = function()
             
             local _, spellId = GetSpellBookItemInfo(spellName)
             spellName = string.gsub(spellName, "%s+", "") -- remove spaces. may need to add other if other special characters need to be removed
-            if not aura_env.Spells[spellName] then                
+            if not aura_env.Spells[spellName] then    
                 aura_env.Spells[spellName] = spellId
             end
             
@@ -624,6 +561,7 @@ aura_env.BuildSpellBook = function()
     aura_env.Spells["SaroniteBomb"] = 56350
     aura_env.Spells["Sapper"] = 56488
     aura_env.Spells["HyperspeedAcceleration"] = 54758
+    aura_env.Spells["DancingRuneWeapon"] = 49028
     
     --DK
     aura_env.Spells["Desolation"] = 66803
@@ -631,7 +569,7 @@ aura_env.BuildSpellBook = function()
     aura_env.Spells["FreezingFog"] = 59052
     aura_env.Spells["UnholyForce"] = 67383
     aura_env.Spells["UnholyMight"] = 67117
-    aura_env.Spells["UnholyFrenzy"] = 55975
+    aura_env.Spells["UnholyFrenzy"] = 49016
     aura_env.Spells["Indomitable"] = 71227
     
     --Tier 10 2p/4p aura id's
@@ -649,7 +587,7 @@ aura_env.BuildSpellBook = function()
         else
             aura_env.SpellsById[id] = name
         end
-        if DLAPI and aura_env.DEBUG then DLAPI.DebugLog("Spells",id) end
+        if DLAPI and aura_env.DEBUG then DLAPI.DebugLog("Spells", name .. ": " .. id) end
         
     end
 end
@@ -658,17 +596,17 @@ aura_env.BuildSpellBook()
 
 aura_env.IsMajorCooldown = function(spellId)
     return spellId == aura_env.Spells.RaiseDead or
-        spellId == aura_env.Spells.EmpowerRuneWeapon or
-        spellId == aura_env.Spells.UnbreakableArmor or
-        spellId == aura_env.Spells.BloodTap or
-        spellId == aura_env.Spells.ArmyOfTheDead or
-        spellId == aura_env.Spells.Gloves or
-        spellId == aura_env.Spells.SaroniteBomb or
-        spellId == aura_env.Spells.Sapper or
-        spellId == aura_env.Spells.PotionOfSpeed or
-        spellId == aura_env.Spells.IndestructiblePotion or
-        spellId == aura_env.Spells.FrostPresence or
-        spellId == aura_env.Spells.UnholyFrenzy --[[or
+    spellId == aura_env.Spells.EmpowerRuneWeapon or
+    spellId == aura_env.Spells.UnbreakableArmor or
+    spellId == aura_env.Spells.BloodTap or
+    spellId == aura_env.Spells.ArmyOfTheDead or
+    spellId == aura_env.Spells.Gloves or
+    spellId == aura_env.Spells.SaroniteBomb or
+    spellId == aura_env.Spells.Sapper or
+    spellId == aura_env.Spells.PotionOfSpeed or
+    spellId == aura_env.Spells.IndestructiblePotion or
+    spellId == aura_env.Spells.FrostPresence or
+    spellId == aura_env.Spells.UnholyFrenzy --[[or
     spellId == aura_env.Spells.SummonGargoyle --]]
 end
 
@@ -693,7 +631,7 @@ aura_env.FindAuraByName = function(name, unit)
     elseif unit == "pet" then
         cache = aura_env.FindAuraByNamePetCache
     end
-
+    
     local aura = cache[name]
     if not aura then
         aura = { AuraUtil.FindAuraByName(name, unit, filter) }
@@ -812,3 +750,4 @@ function aura_env.TimeToX_f(guid, percentage, minSamples)
     end
     return seconds
 end
+
