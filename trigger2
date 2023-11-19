@@ -1,0 +1,6 @@
+--Custom->Status->Event(s): UNIT_SPELLCAST_SUCCEEDED:player
+function(_,_,_,spellId)
+    if spellId then
+        aura_env.SpellCastSucceeded(spellId) 
+    end
+end
