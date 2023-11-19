@@ -1,0 +1,4 @@
+--Custom->Status->Event(s): PLAYER_LOGIN, PLAYER_TALENT_UPDATE, PLAYER_EQUIPMENT_CHANGED, PLAYER_ENTERING_WORLD, ON_LOAD
+function()
+    aura_env.BuildSpellBook()
+end
